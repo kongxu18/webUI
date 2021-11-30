@@ -4,7 +4,10 @@
 
 <script>
 export default {
-  name: "ActualCourse"
+  name: "ActualCourse",
+  created() {
+    console.log(this.$route.path);
+  }
 }
 </script>
 

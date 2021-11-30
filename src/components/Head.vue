@@ -93,7 +93,7 @@ export default {
   created() {
     sessionStorage.url_path = this.$route.path;
     this.url_path = this.$route.path;
-
+    
     //当页面一创建，我就去cookie中取token和username
     this.username = this.$cookies.get('username')   //取到就有值，取不到就为空
     this.token = this.$cookies.get('token')   //取到就有值，取不到就为空
