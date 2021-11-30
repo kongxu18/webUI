@@ -3,7 +3,7 @@
     <div id="banner">
 
         <el-carousel height="400px">
-            <el-carousel-item v-for="(index,item) in banner_list" :key="index">
+            <el-carousel-item v-for="(item,index) in banner_list" :key="index">
                 <!--<img src="../assets/img/banner1.png" alt="">-->
                 <router-link :to="item.link">
                     <img :src="item.img" :alt="item.name">
