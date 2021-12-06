@@ -89,7 +89,27 @@
                     });
                     return false;
                 }
-                this.is_send = true;
+                //发送axios请求 ，验证手机号
+                this.$axios.get(this.$settings.base_url+'/user/check_telephone/',
+                    {params:{telephone:this.mobile}}).then(response=>{
+                      if (response.data.code){
+                        //手机号存在 允许发送验证码
+                        console.log('手机号码存在，可以发送验证码')
+                        this.is_send = true;
+                      }else {
+                        this.$message({
+                          message: '手机号不存在',
+                          type: 'warning',
+                          duration: 1000,
+                          onClose: () => {
+                            this.mobile = '';
+                          }
+                        });
+                      }
+                }).catch(error=>{
+                    console.log(error,'手机号验证错误')
+                })
+
             },
             send_sms() {
 
@@ -97,8 +117,26 @@
                 this.is_send = false;
                 let sms_interval_time = 60;
                 this.sms_interval = "发送中...";
+                //开始发送验证码
+                this.$axios.get(this.$settings.base_url+'/user/send/',
+                {params:{'telephone':this.mobile}}).then(response=>{
+                  if (response.data.code){
+                    this.$message({
+                      message: '发送验证码成功',
+                      type: 'success',
+                      duration: 1000,
+                    });
+                  }else {
+                    this.$message({
+                      message: '验证码发送失败',
+                      type: 'warning',
+                      duration: 1000,
+                    });
+                  }
+                })
                 let timer = setInterval(() => {
                     if (sms_interval_time <= 1) {
+                        //如果小于=1 定时器清除
                         clearInterval(timer);
                         this.sms_interval = "获取验证码";
                         this.is_send = true; // 重新回复点击发送功能的条件
