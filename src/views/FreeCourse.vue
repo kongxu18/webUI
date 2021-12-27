@@ -37,9 +37,11 @@
                         <img :src="course.course_img" alt="">
                     </div>
                     <div class="course-info">
+
                         <h3>
-                            <router-link :to="'/free/detail/'+course.id">{{course.name}}</router-link>
-                            <span><img src="@/assets/img/avatar1.svg" alt="">{{course.students}}人已加入学习</span></h3>
+                            <router-link :to="'/free/detail/'+course.id" >{{course.name}}</router-link>
+                            <span><img src="@/assets/img/avatar1.svg" alt="">{{course.students}}人已加入学习</span>
+                        </h3>
                         <p class="teather-info">
                             {{course.teacher.name}} {{course.teacher.title}} {{course.teacher.signature}}
                             <span v-if="course.sections>course.pub_sections">共{{course.sections}}课时/已更新{{course.pub_sections}}课时</span>
@@ -92,7 +94,7 @@ export default {
             filter: {
                 course_category: 0, // 当前用户选择的课程分类，刚进入页面默认为全部，值为0
                 ordering: "-id",    // 数据的排序方式，默认值是-id，表示对于id进行降序排列
-                page_size: 2,       // 单页数据量
+                page_size: 5,       // 单页数据量
                 page: 1,
             }
         }
