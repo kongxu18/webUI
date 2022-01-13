@@ -8,7 +8,7 @@
                     <li class="title">课程分类:</li>
                     <li :class="filter.course_category==0?'this':''" @click="filter.course_category=0">全部</li>
                     <li :class="filter.course_category==category.id?'this':''" v-for="category in category_list"
-                        @click="filter.course_category=category.id" :key="category.name">{{category.name}}
+                        @click="filter.course_category=category.id" :key="category.name">{{ category.name }}
                     </li>
                 </ul>
 
@@ -26,7 +26,7 @@
                             @click="filter.ordering=(filter.ordering=='-price'?'price':'-price')">价格
                         </li>
                     </ul>
-                    <p class="condition-result">共{{course_total}}个课程</p>
+                    <p class="condition-result">共{{ course_total }}个课程</p>
                 </div>
 
             </div>
@@ -39,27 +39,30 @@
                     <div class="course-info">
 
                         <h3>
-                            <router-link :to="'/free/detail/'+course.id" >{{course.name}}</router-link>
-                            <span><img src="@/assets/img/avatar1.svg" alt="">{{course.students}}人已加入学习</span>
+                            <router-link :to="'/free/detail/'+course.id">{{ course.name }}</router-link>
+                            <span><img src="@/assets/img/avatar1.svg" alt="">{{ course.students }}人已加入学习</span>
                         </h3>
                         <p class="teather-info">
-                            {{course.teacher.name}} {{course.teacher.title}} {{course.teacher.signature}}
-                            <span v-if="course.sections>course.pub_sections">共{{course.sections}}课时/已更新{{course.pub_sections}}课时</span>
-                            <span v-else>共{{course.sections}}课时/更新完成</span>
+                            {{ course.teacher.name }} {{ course.teacher.title }} {{ course.teacher.signature }}
+                            <span
+                                v-if="course.sections>course.pub_sections">共{{
+                                    course.sections
+                                }}课时/已更新{{ course.pub_sections }}课时</span>
+                            <span v-else>共{{ course.sections }}课时/更新完成</span>
                         </p>
                         <ul class="section-list">
                             <li v-for="(section, key) in course.section_list" :key="section.name"><span
-                                class="section-title">0{{key+1}}  |  {{section.name}}</span>
+                                class="section-title">0{{ key + 1 }}  |  {{ section.name }}</span>
                                 <span class="free" v-if="section.free_trail">免费</span></li>
                         </ul>
                         <div class="pay-box">
                             <div v-if="course.discount_type">
-                                <span class="discount-type">{{course.discount_type}}</span>
-                                <span class="discount-price">￥{{course.real_price}}元</span>
-                                <span class="original-price">原价：{{course.price}}元</span>
+                                <span class="discount-type">{{ course.discount_type }}</span>
+                                <span class="discount-price">￥{{ course.real_price }}元</span>
+                                <span class="original-price">原价：{{ course.price }}元</span>
                             </div>
-                            <span v-else class="discount-price">￥{{course.price}}元</span>
-                            <span class="buy-now">立即购买</span>
+                            <span v-else class="discount-price">￥{{ course.price }}元</span>
+                            <span class="buy-now" @click="buy_now(course)">立即购买</span>
                         </div>
                     </div>
                 </div>
@@ -182,6 +185,34 @@ export default {
                     message: "获取课程信息有误，请联系客服工作人员"
                 })
             })
+        },
+        buy_now(course) {
+            //    拿出token
+            let token = this.$cookies.get('token')
+            if (!token) {
+                //    未登录
+                this.$message({
+                    message: '请先登录'
+                })
+                return false
+            }
+            this.$axios({
+                method: 'post',
+                url: this.$settings.base_url + '/order/pay/',
+                data: {
+                    total_amount: course.price,
+                    subject: course.name,
+                    pay_type: 1,
+                    course: [course.id]
+                },
+                headers: {Authorization: 'jwt ' + token},
+            }).then(response => {
+                console.log(response.data)
+                let pay_url = response.data
+                //    前端发送get请求
+                window.open(pay_url);
+            })
+
         }
     }
 }
